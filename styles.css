@@ -37,7 +37,6 @@ div.floating-menu a, div.floating-menu h3 {
     margin-left: calc(50% - 5vw);
     bottom: calc(50% - 5vw);
     position: absolute;
-    width: 100%;
 }
 .overlayIcon img {
     width: 10vw;
