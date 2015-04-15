@@ -51,7 +51,9 @@ div.floating-menu a, div.floating-menu h3 {
     bottom: 10%;
     left: 5%;
 }
-
+#topIcon {
+    width: 80px;
+}
 #topQuotes {
     display: inline-block;
     font-size: 4em;
