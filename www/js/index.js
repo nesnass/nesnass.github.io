@@ -100,6 +100,10 @@ var assets = [
     {
         id: 'background_forest',
         src: 'forest/forest.jpg'
+    },
+    {   // Scene - Staring
+        id: 'staring_man',
+        src: 'staring/staring_man.png'
     }
 ];
 
@@ -182,6 +186,28 @@ var runSmoking = function(background_4, smoke_4, man_4, blackground) {
         background_4.visible = man_4.visible = smoke_4.visible = false;
         smoke_4.removeEventListener('animationend', stopSmoke);
         man_4.removeEventListener('animationend', startSmoke);
+        createjs.Ticker.removeEventListener('tick', tick);
+        chooseScene();
+    }
+    function tick() {
+        stage.update();
+    }
+}
+
+var runStaring = function(background_4, man_6, blackground) {
+
+    background_4.visible = true;
+    man_6.visible = true;
+
+    createjs.Ticker.addEventListener('tick', tick);
+    createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
+
+    setTimeout(function () {
+        createjs.Tween.get(blackground, {override: true}).to({alpha: 1}, FADE_OUT_TIME).wait(FADE_OUT_TIME*2).call(cleanUp);
+    }, SCENE_RUN_TIME);
+
+    function cleanUp() {
+        background_4.visible = man_6.visible = false;
         createjs.Ticker.removeEventListener('tick', tick);
         chooseScene();
     }
@@ -339,7 +365,7 @@ function addAssetsToStage () {
     var glow_2 = new createjs.Bitmap(d_2).set({regY:0, regX:0, x: 330, y: 385});
 
     background_2.visible = background_2b.visible = glow_2.visible = false;
-    realityScenes.push(wrapFunction(runEmptyRoom, this, [background_2, background_2b, glow_2, blackground]));
+    dreamScenes.push(wrapFunction(runEmptyRoom, this, [background_2, background_2b, glow_2, blackground]));
 
 
     // 3 Forest
@@ -420,8 +446,13 @@ function addAssetsToStage () {
     dreamScenes.push(wrapFunction(runSpace, this, [background_5, nova_5, alien_5, bulb_5, glow_5, blackground]));
 
 
+    // Staring man
 
+    var a_6 = loader.getResult('staring_man');
+    var man_6 = new createjs.Bitmap(a_6).set({regY:0, regX:0, x: 300, y: 100});
+    man_6.scaleX = man_6.scaleY = 0.9;
 
+    realityScenes.push(wrapFunction(runStaring, this, [background_4, man_6, blackground]));
 
 
     stage.addChild(background_1, man_1);
@@ -429,6 +460,7 @@ function addAssetsToStage () {
     stage.addChild(background_3, bulb_3);
     stage.addChild(background_4, man_4, smoke_4);
     stage.addChild(background_5, nova_5, bulb_5, glow_5, alien_5);
+    stage.addChild(man_6);
     stage.addChild(blackground);
 
     chooseScene();
@@ -449,7 +481,7 @@ function init () {
 }
 
 function chooseScene () {
-   // realityScenes[0]();
+    realityScenes[2]();
 
     // Random selection:
 /*
@@ -468,7 +500,7 @@ function chooseScene () {
 
     // Sequential:
 
-
+/*
     if(REALITY_INDEX === realityScenes.length)
         REALITY_INDEX = 0;
     if(DREAM_INDEX === dreamScenes.length)
@@ -484,7 +516,7 @@ function chooseScene () {
         dreamScenes[DREAM_INDEX]();
         DREAM_INDEX++;
     }
-
+*/
 }
 
 var app = {
