@@ -1,0 +1,10 @@
+{
+  "name": "vivid",
+  "version": "0.0.1",
+  "dependencies": {
+      "EaselJS": "0.8.x",
+      "TweenJS": "0.6.x",
+      "PreloadJS": "0.6.x"
+  }
+}
+
