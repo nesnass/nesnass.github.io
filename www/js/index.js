@@ -69,9 +69,13 @@ var assets = [
         id: 'man',
         src: 'pacingman/spritesheet.png'
     },
+    {
+        id: 'main_room_bw',
+        src: 'pacingman/main_room_sketch_bw.jpg'
+    },
     {   // Scene - Smoking
         id: 'smoking_man',
-        src: 'smoking/smoking_man.png'
+        src: 'smoking/smoking_man2.png'
     },
     {
         id: 'smoke',
@@ -303,7 +307,7 @@ var runPacingMan = function (background, man, blackground) {
     }
 
     function tick(event) {
-        var deltaS = event.delta / 2000;
+        /*var deltaS = event.delta / 2000;
         var position = reverse ? man.x - 150 * deltaS : man.x + 150 * deltaS;
 
         if(reverse) {
@@ -320,6 +324,7 @@ var runPacingMan = function (background, man, blackground) {
             }
             else man.x = position;
         }
+        */
         stage.update();
     }
 }
@@ -334,7 +339,7 @@ function addAssetsToStage () {
 
     // 1 Pacing Man
 
-    var a_1 = loader.getResult('main_room');
+    var a_1 = loader.getResult('main_room_bw');
     var background_1 = new createjs.Bitmap(a_1).set({regY:0, regX:0, x: 0, y: 0});
 
     var spriteSheet_1 = new createjs.SpriteSheet({
@@ -393,7 +398,7 @@ function addAssetsToStage () {
         "images": [loader.getResult('smoking_man')],
         "frames": {"regX": 0, "height": 655, "regY": 0, "width": 192},
         "animations": {
-            "man": [0, 5, null, 0.1]
+            "man": [0, 15, null, 0.1]
         }
     });
     var man_4 = new createjs.Sprite(spriteSheet_4, "smoking_man");
@@ -413,7 +418,7 @@ function addAssetsToStage () {
     smoke_4.y = 150; smoke_4.x = 180;
     smoke_4.stop();
 
-    var a_4 = loader.getResult('main_room');
+    var a_4 = loader.getResult('main_room_bw');
     var background_4 = new createjs.Bitmap(a_4).set({regY:0, regX:0, x: 0, y: 0});
 
     man_4.visible = smoke_4.visible = background_4.visible = false;
@@ -451,6 +456,7 @@ function addAssetsToStage () {
     var a_6 = loader.getResult('staring_man');
     var man_6 = new createjs.Bitmap(a_6).set({regY:0, regX:0, x: 300, y: 100});
     man_6.scaleX = man_6.scaleY = 0.9;
+    man_6.visible = false;
 
     realityScenes.push(wrapFunction(runStaring, this, [background_4, man_6, blackground]));
 
@@ -481,7 +487,7 @@ function init () {
 }
 
 function chooseScene () {
-    realityScenes[2]();
+    realityScenes[1]();
 
     // Random selection:
 /*
