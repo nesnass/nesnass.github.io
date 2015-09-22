@@ -63,11 +63,15 @@ var assets = [
     },
     {   // Scene 2 - Room with pacing man
         id: 'main_room',
-        src: 'pacingman/main_room.jpg'
+        src: 'pacingman/main_room2.jpg'
     },
     {
         id: 'man',
         src: 'pacingman/spritesheet.png'
+    },
+    {
+        id: 'speaker',
+        src: 'pacingman/speaker2.png'
     },
     {
         id: 'main_room_bw',
@@ -115,21 +119,22 @@ var dreamScenes = [];
 var realityScenes = [];
 
 
-var runSpace = function(background_5, nova_5, alien_5, bulb_5, glow_5, blackground) {
+var runSpace = function(background_5, nova_5, bulb_5, glow_5, blackground) {
     var radius = 5;
     var alpha = 0.1;
 
+    /*
     alien_5.x = 700;
     alien_5.y = 450;
     alien_5.scaleX = alien_5.scaleY = 0.01;
-
-    background_5.visible = true;
     alien_5.visible = true;
+    */
+    background_5.visible = true;
     nova_5.visible = true;
     bulb_5.visible = true;
     glow_5.visible = true;
 
-    createjs.Tween.get(alien_5).wait(800).to({scaleX:6, scaleY:6, x:-1800, y:-1800, regX:2000, regY:500}, 4000, createjs.Ease.getPowInOut(3));
+    //createjs.Tween.get(alien_5).wait(800).to({scaleX:6, scaleY:6, x:-1800, y:-1800, regX:2000, regY:500}, 4000, createjs.Ease.getPowInOut(3));
 
     createjs.Ticker.addEventListener('tick', tick);
     createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
@@ -140,9 +145,9 @@ var runSpace = function(background_5, nova_5, alien_5, bulb_5, glow_5, blackgrou
 
     function cleanUp() {
         nova_5.graphics.clear();
-        alien_5.regX = alien_5.regY = 0;
+        //alien_5.regX = alien_5.regY = 0;
 
-        background_5.visible = bulb_5.visible = nova_5.visible = alien_5.visible = glow_5.visible = false;
+        background_5.visible = bulb_5.visible = nova_5.visible = glow_5.visible = false;
         createjs.Ticker.removeEventListener('tick', tick);
         chooseScene();
     }
@@ -202,6 +207,7 @@ var runStaring = function(background_4, man_6, blackground) {
 
     background_4.visible = true;
     man_6.visible = true;
+    man_6.x = 100+Math.floor(Math.random()*600);
 
     createjs.Ticker.addEventListener('tick', tick);
     createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
@@ -286,8 +292,32 @@ var runEmptyRoom = function (background_dark, background_light, glow, blackgroun
     }
 }
 
+var runEmptyRoom2 = function (background, speaker, bulb, glow, blackground) {
+    background.visible = true;
+    speaker.visible = true;
+    glow.visible = true;
+    bulb.visible = true;
+
+    //createjs.Ticker.setFPS(30);
+    createjs.Ticker.addEventListener('tick', tick_x);
+    createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
+
+    setTimeout(function () {
+        createjs.Tween.get(blackground, {override: true}).to({alpha: 1}, FADE_OUT_TIME).wait(FADE_OUT_TIME*2).call(cleanUp);
+    }, SCENE_RUN_TIME);
+
+    function cleanUp() {
+        background.visible = speaker.visible = glow.visible = bulb.visible = false;
+        createjs.Ticker.removeEventListener('tick', tick_x);
+        chooseScene();
+    }
+    function tick_x() {
+        stage.update();
+    }
+}
+
 var runPacingMan = function (background, man, blackground) {
-    var reverse = false;
+    var reverse = true;
 
     background.visible = true;
     man.visible = true;
@@ -307,24 +337,24 @@ var runPacingMan = function (background, man, blackground) {
     }
 
     function tick(event) {
-        /*var deltaS = event.delta / 2000;
+        var deltaS = event.delta / 1500;
         var position = reverse ? man.x - 150 * deltaS : man.x + 150 * deltaS;
 
         if(reverse) {
-            if (position <= 200) {
-                man.scaleX = 1;
+            if (position <= 400) {
+                man.scaleX = -0.9;
                 reverse = false;
             }
             else man.x = position;
         }
         else {
-            if(position >= 500) {
-                man.scaleX = -1;
+            if(position >= 700) {
+                man.scaleX = 0.9;
                 reverse = true;
             }
             else man.x = position;
         }
-        */
+
         stage.update();
     }
 }
@@ -343,17 +373,17 @@ function addAssetsToStage () {
     var background_1 = new createjs.Bitmap(a_1).set({regY:0, regX:0, x: 0, y: 0});
 
     var spriteSheet_1 = new createjs.SpriteSheet({
-        framerate: 2,
+        framerate: 5,
         "images": [loader.getResult('man')],
-        "frames": {"regX": 0, "height": 800, "regY": 0, "width": 300},
+        "frames": {"regX": 0, "height": 629, "regY": 0, "width": 258},
         // define two animations, run (loops, 1.5x speed) and jump (returns to run):
         "animations": {
-            "run": [0, 5, "run", 0.1],
-            "jump": [26, 63, "run"]
+            "run": [0, 20, "run", 0.5]
         }
     });
     var man_1 = new createjs.Sprite(spriteSheet_1, "run");
-    man_1.y = 35; man_1.x = 200;
+    man_1.y = 200; man_1.x = 200;
+    man_1.scaleX = man_1.scaleY = 0.9;
 
     background_1.visible = man_1.visible = false;
     realityScenes.push(wrapFunction(runPacingMan, this, [background_1, man_1, blackground]));
@@ -403,7 +433,7 @@ function addAssetsToStage () {
     });
     var man_4 = new createjs.Sprite(spriteSheet_4, "smoking_man");
     man_4.name = 'smoking_man';
-    man_4.y = 175; man_4.x = 350;
+    man_4.y = 175; man_4.x = 370;
     man_4.scaleX = man_4.scaleY = 0.9;
 
     var spriteSheet_4b = new createjs.SpriteSheet({
@@ -435,9 +465,9 @@ function addAssetsToStage () {
     var glow_5 = new createjs.Bitmap(b_5).set({regY:0, regX:0, x: 225, y: 150});
     //glow.scaleX = glow.scaleY = 0.3;
 
-    var c_5 = loader.getResult('alien');
-    var alien_5 = new createjs.Bitmap(c_5).set({regY:0, regX:0, x: 700, y: 450});
-    alien_5.scaleX = alien_5.scaleY = 0.01;
+    //var c_5 = loader.getResult('alien');
+    //var alien_5 = new createjs.Bitmap(c_5).set({regY:0, regX:0, x: 700, y: 450});
+    //alien_5.scaleX = alien_5.scaleY = 0.01;
 
     var nova_5 = new createjs.Shape();
     //nova.graphics.beginFill(createjs.Graphics.getRGB(255,255,100,0)).drawCircle(100,100,radius);
@@ -447,14 +477,25 @@ function addAssetsToStage () {
     var d_5 = loader.getResult('space_background');
     var background_5 = new createjs.Bitmap(d_5).set({regY:0, regX:0, x: 0, y: 0});
 
-    background_5.visible = bulb_5.visible = nova_5.visible = alien_5.visible = glow_5.visible = false;
-    dreamScenes.push(wrapFunction(runSpace, this, [background_5, nova_5, alien_5, bulb_5, glow_5, blackground]));
+    background_5.visible = bulb_5.visible = nova_5.visible = glow_5.visible = false;
+    dreamScenes.push(wrapFunction(runSpace, this, [background_5, nova_5, bulb_5, glow_5, blackground]));
 
+    // 2 Empty Room 2
+
+    var a_2_2 = loader.getResult('main_room');
+    var background_2_2 = new createjs.Bitmap(a_2_2).set({regY:0, regX:0, x: 0, y: 0});
+
+    var d_2_2 = loader.getResult('speaker');
+    var speaker = new createjs.Bitmap(d_2_2).set({regY:0, regX:0, x: 500, y: 250});
+    speaker.scaleX = speaker.scaleY = 0.4;
+
+    background_2_2.visible = speaker.visible = false;
+    dreamScenes.push(wrapFunction(runEmptyRoom2, this, [background_2_2, speaker, bulb_5, glow_5, blackground]));
 
     // Staring man
 
     var a_6 = loader.getResult('staring_man');
-    var man_6 = new createjs.Bitmap(a_6).set({regY:0, regX:0, x: 300, y: 100});
+    var man_6 = new createjs.Bitmap(a_6).set({regY:0, regX:0, x: 500, y: 100});
     man_6.scaleX = man_6.scaleY = 0.9;
     man_6.visible = false;
 
@@ -463,9 +504,10 @@ function addAssetsToStage () {
 
     stage.addChild(background_1, man_1);
     stage.addChild(background_2, background_2b, glow_2);
+    stage.addChild(background_2_2, speaker);
     stage.addChild(background_3, bulb_3);
     stage.addChild(background_4, man_4, smoke_4);
-    stage.addChild(background_5, nova_5, bulb_5, glow_5, alien_5);
+    stage.addChild(background_5, nova_5, bulb_5, glow_5);
     stage.addChild(man_6);
     stage.addChild(blackground);
 
@@ -487,7 +529,7 @@ function init () {
 }
 
 function chooseScene () {
-    realityScenes[1]();
+    realityScenes[0]();
 
     // Random selection:
 /*
