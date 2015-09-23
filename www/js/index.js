@@ -109,6 +109,10 @@ var assets = [
         id: 'background_forest',
         src: 'forest/forest.jpg'
     },
+    {
+        id: 'trees',
+        src: 'forest/trees.png'
+    },
     {   // Scene - Staring
         id: 'staring_man',
         src: 'staring/staring_man.png'
@@ -228,10 +232,11 @@ var runStaring = function(background_4, man_6, blackground) {
     }
 }
 
-var runForest = function (background, bulb, blackground) {
+var runForest = function (background, bulb, trees, blackground) {
 
     background.visible = true;
     bulb.visible = true;
+    trees.visible = true;
 
     //createjs.Ticker.timingMode = createjs.Ticker.TIMEOUT;
     createjs.Ticker.addEventListener('tick', tick);
@@ -428,11 +433,14 @@ function addAssetsToStage () {
     var bulb_3 = new createjs.Sprite(spriteSheet_3, "swing");
     bulb_3.y = 0; bulb_3.x = 200;
 
+    var b_3 = loader.getResult('trees');
+    var trees_3 = new createjs.Bitmap(b_3).set({regY:0, regX:0, x: 200, y: 0});
+
     var a_3 = loader.getResult('background_forest');
     var background_3 = new createjs.Bitmap(a_3).set({regY:0, regX:0, x: 0, y: 0});
 
-    bulb_3.visible = background_3.visible = false;
-    dreamScenes.push(wrapFunction(runForest, this, [background_3, bulb_3, blackground]));
+    bulb_3.visible = background_3.visible = trees_3.visible = false;
+    dreamScenes.push(wrapFunction(runForest, this, [background_3, bulb_3, trees_3, blackground]));
 
 
     // 4 Smoking man
@@ -519,7 +527,7 @@ function addAssetsToStage () {
     stage.addChild(background_1, man_1);
     stage.addChild(background_2, background_2b, glow_2);
     stage.addChild(background_2_2, speaker);
-    stage.addChild(background_3, bulb_3);
+    stage.addChild(background_3, bulb_3, trees_3);
     stage.addChild(background_4, man_4, smoke_4);
     stage.addChild(background_5, nova_5, bulb_5, glow_5);
     stage.addChild(man_6);
@@ -543,7 +551,7 @@ function init () {
 }
 
 function chooseScene () {
-    //realityScenes[0]();
+    //dreamScenes[1]();
 
     // Random selection:
 /*
