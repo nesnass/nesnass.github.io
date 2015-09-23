@@ -164,8 +164,10 @@ var runSmoking = function(background_4, smoke_4, man_4, blackground) {
 
     background_4.visible = true;
     smoke_4.visible = true;
+    var move = 100+Math.floor(Math.random()*600);
+    man_4.x = move;
+    smoke_4.x = move - 275;
     man_4.visible = true;
-    smoke_4.play();
     man_4.addEventListener('animationend', startSmoke);
 
     function startSmoke() {
@@ -314,13 +316,16 @@ var runEmptyRoom2 = function (background, speaker, bulb, glow, blackground) {
     function tick_x() {
         stage.update();
     }
-}
+};
 
 var runPacingMan = function (background, man, blackground) {
-    var reverse = true;
+    var reverse = false;
+    var position = 100;
+    var deltaS = 0;
 
     background.visible = true;
     man.visible = true;
+    man.gotoAndPlay("turn_for_right");
 
     createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
     //createjs.Ticker.timingMode = createjs.Ticker.RAF;
@@ -337,27 +342,32 @@ var runPacingMan = function (background, man, blackground) {
     }
 
     function tick(event) {
-        var deltaS = event.delta / 1500;
-        var position = reverse ? man.x - 150 * deltaS : man.x + 150 * deltaS;
+        deltaS = event.delta / 1000;
+
+     //   var position = reverse ? man.x - 150 * deltaS : man.x + 150 * deltaS;
 
         if(reverse) {
-            if (position <= 400) {
-                man.scaleX = -0.9;
+            position = man.x - deltaS * 150;
+            if (position <= 100) {
                 reverse = false;
+                man.gotoAndPlay("turn_for_right");
             }
-            else man.x = position;
+            else {
+                man.x = position;
+            }
         }
         else {
+            position = man.x + deltaS * 150;
             if(position >= 700) {
-                man.scaleX = 0.9;
                 reverse = true;
+                man.gotoAndPlay("turn_for_left");
             }
             else man.x = position;
         }
 
         stage.update();
     }
-}
+};
 
 // Place all assets on the stage in correct order
 function addAssetsToStage () {
@@ -378,7 +388,10 @@ function addAssetsToStage () {
         "frames": {"regX": 0, "height": 629, "regY": 0, "width": 258},
         // define two animations, run (loops, 1.5x speed) and jump (returns to run):
         "animations": {
-            "run": [0, 20, "run", 0.5]
+            "walk_left": [0, 7, "walk_left", 0.5],
+            "walk_right": [11, 17, "walk_right", 0.5],
+            "turn_for_right": [8, 10, "walk_right", 0.5],
+            "turn_for_left": [18, 20, "walk_left", 0.5]
         }
     });
     var man_1 = new createjs.Sprite(spriteSheet_1, "run");
@@ -438,14 +451,15 @@ function addAssetsToStage () {
 
     var spriteSheet_4b = new createjs.SpriteSheet({
         "images": [loader.getResult('smoke')],
-        "frames": {"regX": 0, "height": 166, "regY": 0, "width": 350},
+        "frames": {"regX": 0, "height": 83, "regY": 0, "width": 175},
         "animations": {
-            "smoking": [0, 8, null, 0.1]
+            "smoking": [0, 13, null, 0.1]
         }
     });
     var smoke_4 = new createjs.Sprite(spriteSheet_4b, "smoke");
     smoke_4.name = 'smoke';
-    smoke_4.y = 150; smoke_4.x = 180;
+    smoke_4.y = 80;
+    smoke_4.scaleX = smoke_4.scaleY = 3;
     smoke_4.stop();
 
     var a_4 = loader.getResult('main_room_bw');
@@ -529,7 +543,7 @@ function init () {
 }
 
 function chooseScene () {
-    realityScenes[0]();
+    //realityScenes[0]();
 
     // Random selection:
 /*
@@ -548,7 +562,7 @@ function chooseScene () {
 
     // Sequential:
 
-/*
+
     if(REALITY_INDEX === realityScenes.length)
         REALITY_INDEX = 0;
     if(DREAM_INDEX === dreamScenes.length)
@@ -564,7 +578,7 @@ function chooseScene () {
         dreamScenes[DREAM_INDEX]();
         DREAM_INDEX++;
     }
-*/
+
 }
 
 var app = {
