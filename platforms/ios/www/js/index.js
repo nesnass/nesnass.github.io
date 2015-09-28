@@ -20,7 +20,7 @@
 var IMAGE_FOLDER = '../www/img/'; // Enable for testing on local machine
 // var IMAGE_FOLDER = '../img/'; // Enable for Cordova use
 var FADE_OUT_TIME = 1000;
-var SCENE_RUN_TIME = 10000;
+var SCENE_RUN_TIME = 15000;
 var DREAMING = true;  //  Are we in reality, or in the dream?
 var DREAM_INDEX = 0
 var REALITY_INDEX = 0
@@ -58,6 +58,10 @@ var assets = [
         src: 'emptyroom/bulb3.png'
     },
     {
+        id: 'bulb_solid',
+        src: 'space/bulb_solid.png'
+    },
+    {
         id: 'glow',
         src: 'emptyroom/glowbulb.png'
     },
@@ -67,7 +71,7 @@ var assets = [
     },
     {
         id: 'man',
-        src: 'pacingman/spritesheet.png'
+        src: 'pacingman/spritesheet2.png'
     },
     {
         id: 'speaker',
@@ -87,7 +91,7 @@ var assets = [
     },
     {   // Scene - Space
         id: 'space_background',
-        src: 'space/space_background.png'
+        src: 'space/space_background2.png'
     },
     {
         id: 'alien',
@@ -108,6 +112,10 @@ var assets = [
     {
         id: 'background_forest',
         src: 'forest/forest.jpg'
+    },
+    {
+        id: 'trees',
+        src: 'forest/trees.png'
     },
     {   // Scene - Staring
         id: 'staring_man',
@@ -160,10 +168,11 @@ var runSpace = function(background_5, nova_5, bulb_5, glow_5, blackground) {
 
 }
 
-var runSmoking = function(background_4, smoke_4, man_4, blackground) {
+var runSmoking = function(background_4, smoke_4, man_4, bulb_solid, blackground) {
 
     background_4.visible = true;
     smoke_4.visible = true;
+    bulb_solid.visible = true;
     var move = 100+Math.floor(Math.random()*600);
     man_4.x = move;
     smoke_4.x = move - 275;
@@ -194,7 +203,7 @@ var runSmoking = function(background_4, smoke_4, man_4, blackground) {
     }, SCENE_RUN_TIME);
 
     function cleanUp() {
-        background_4.visible = man_4.visible = smoke_4.visible = false;
+        background_4.visible = man_4.visible = smoke_4.visible = bulb_solid.visible = false;
         smoke_4.removeEventListener('animationend', stopSmoke);
         man_4.removeEventListener('animationend', startSmoke);
         createjs.Ticker.removeEventListener('tick', tick);
@@ -205,10 +214,11 @@ var runSmoking = function(background_4, smoke_4, man_4, blackground) {
     }
 }
 
-var runStaring = function(background_4, man_6, blackground) {
+var runStaring = function(background_4, man_6, bulb_solid, blackground) {
 
     background_4.visible = true;
     man_6.visible = true;
+    bulb_solid.visible = true;
     man_6.x = 100+Math.floor(Math.random()*600);
 
     createjs.Ticker.addEventListener('tick', tick);
@@ -219,7 +229,7 @@ var runStaring = function(background_4, man_6, blackground) {
     }, SCENE_RUN_TIME);
 
     function cleanUp() {
-        background_4.visible = man_6.visible = false;
+        background_4.visible = man_6.visible = bulb_solid.visible = false;
         createjs.Ticker.removeEventListener('tick', tick);
         chooseScene();
     }
@@ -228,10 +238,11 @@ var runStaring = function(background_4, man_6, blackground) {
     }
 }
 
-var runForest = function (background, bulb, blackground) {
+var runForest = function (background, bulb, trees, blackground) {
 
     background.visible = true;
     bulb.visible = true;
+    trees.visible = true;
 
     //createjs.Ticker.timingMode = createjs.Ticker.TIMEOUT;
     createjs.Ticker.addEventListener('tick', tick);
@@ -242,7 +253,7 @@ var runForest = function (background, bulb, blackground) {
     }, SCENE_RUN_TIME);
 
     function cleanUp() {
-        background.visible = bulb.visible = false;
+        background.visible = bulb.visible = trees.visible = false;
         createjs.Ticker.removeEventListener('tick', tick);
         chooseScene();
     }
@@ -318,13 +329,14 @@ var runEmptyRoom2 = function (background, speaker, bulb, glow, blackground) {
     }
 };
 
-var runPacingMan = function (background, man, blackground) {
+var runPacingMan = function (background, man, bulb_solid, blackground) {
     var reverse = false;
     var position = 100;
     var deltaS = 0;
 
     background.visible = true;
     man.visible = true;
+    bulb_solid.visible = true;
     man.gotoAndPlay("turn_for_right");
 
     createjs.Tween.get(blackground, {override: true}).to({alpha: 0}, FADE_OUT_TIME);
@@ -336,7 +348,7 @@ var runPacingMan = function (background, man, blackground) {
     }, SCENE_RUN_TIME);
 
     function cleanUp() {
-        background.visible = man.visible = false;
+        background.visible = man.visible = bulb_solid.visible = false;
         createjs.Ticker.removeEventListener('tick', tick);
         chooseScene();
     }
@@ -379,6 +391,10 @@ function addAssetsToStage () {
 
     // 1 Pacing Man
 
+    var b_0 = loader.getResult('bulb_solid');
+    var bulb_solid = new createjs.Bitmap(b_0).set({regY:0, regX:0, x: 300, y: 0});
+    bulb_solid.visible = false;
+
     var a_1 = loader.getResult('main_room_bw');
     var background_1 = new createjs.Bitmap(a_1).set({regY:0, regX:0, x: 0, y: 0});
 
@@ -388,10 +404,10 @@ function addAssetsToStage () {
         "frames": {"regX": 0, "height": 629, "regY": 0, "width": 258},
         // define two animations, run (loops, 1.5x speed) and jump (returns to run):
         "animations": {
-            "walk_left": [0, 7, "walk_left", 0.5],
-            "walk_right": [11, 17, "walk_right", 0.5],
-            "turn_for_right": [8, 10, "walk_right", 0.5],
-            "turn_for_left": [18, 20, "walk_left", 0.5]
+            "walk_left": [0, 14, "walk_left", 0.5],
+            "walk_right": [21, 33, "walk_right", 0.5],
+            "turn_for_right": [15, 20, "walk_right", 0.5],
+            "turn_for_left": [34, 39, "walk_left", 0.5]
         }
     });
     var man_1 = new createjs.Sprite(spriteSheet_1, "run");
@@ -399,7 +415,7 @@ function addAssetsToStage () {
     man_1.scaleX = man_1.scaleY = 0.9;
 
     background_1.visible = man_1.visible = false;
-    realityScenes.push(wrapFunction(runPacingMan, this, [background_1, man_1, blackground]));
+    realityScenes.push(wrapFunction(runPacingMan, this, [background_1, man_1, bulb_solid, blackground]));
 
 
     // 2 Empty Room
@@ -428,11 +444,14 @@ function addAssetsToStage () {
     var bulb_3 = new createjs.Sprite(spriteSheet_3, "swing");
     bulb_3.y = 0; bulb_3.x = 200;
 
+    var b_3 = loader.getResult('trees');
+    var trees_3 = new createjs.Bitmap(b_3).set({regY:0, regX:0, x: 200, y: 0});
+
     var a_3 = loader.getResult('background_forest');
     var background_3 = new createjs.Bitmap(a_3).set({regY:0, regX:0, x: 0, y: 0});
 
-    bulb_3.visible = background_3.visible = false;
-    dreamScenes.push(wrapFunction(runForest, this, [background_3, bulb_3, blackground]));
+    bulb_3.visible = background_3.visible = trees_3.visible = false;
+    dreamScenes.push(wrapFunction(runForest, this, [background_3, bulb_3, trees_3, blackground]));
 
 
     // 4 Smoking man
@@ -466,7 +485,7 @@ function addAssetsToStage () {
     var background_4 = new createjs.Bitmap(a_4).set({regY:0, regX:0, x: 0, y: 0});
 
     man_4.visible = smoke_4.visible = background_4.visible = false;
-    realityScenes.push(wrapFunction(runSmoking, this, [background_4, smoke_4, man_4, blackground]));
+    realityScenes.push(wrapFunction(runSmoking, this, [background_4, smoke_4, man_4, bulb_solid, blackground]));
 
 
     // Space
@@ -513,16 +532,16 @@ function addAssetsToStage () {
     man_6.scaleX = man_6.scaleY = 0.9;
     man_6.visible = false;
 
-    realityScenes.push(wrapFunction(runStaring, this, [background_4, man_6, blackground]));
+    realityScenes.push(wrapFunction(runStaring, this, [background_4, man_6, bulb_solid, blackground]));
 
 
     stage.addChild(background_1, man_1);
     stage.addChild(background_2, background_2b, glow_2);
     stage.addChild(background_2_2, speaker);
-    stage.addChild(background_3, bulb_3);
+    stage.addChild(background_3, bulb_3, trees_3);
     stage.addChild(background_4, man_4, smoke_4);
     stage.addChild(background_5, nova_5, bulb_5, glow_5);
-    stage.addChild(man_6);
+    stage.addChild(man_6, bulb_solid);
     stage.addChild(blackground);
 
     chooseScene();
@@ -543,7 +562,7 @@ function init () {
 }
 
 function chooseScene () {
-    //realityScenes[0]();
+    //dreamScenes[2]();
 
     // Random selection:
 /*
